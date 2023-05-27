@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "./main server"
+    ports:
+      - "10000:10000"
+    volumes:
+      - /var/local_storage/file_server/:/var/local_storage/file_server/

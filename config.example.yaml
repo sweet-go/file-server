@@ -1,0 +1,8 @@
+env: local
+
+log:
+  level: INFO
+
+server:
+  port: 8012
+  storage_path: "/var/local_storage/file_server/"
