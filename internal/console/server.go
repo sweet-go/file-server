@@ -48,6 +48,9 @@ func server(cmd *cobra.Command, args []string) {
 	HTTPServer.Pre(middleware.AddTrailingSlash())
 	HTTPServer.Use(middleware.Recover())
 	HTTPServer.Use(middleware.Logger())
+	HTTPServer.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+	}))
 
 	publicGroup := HTTPServer.Group("public")
 
