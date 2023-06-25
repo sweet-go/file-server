@@ -6,6 +6,10 @@ endif
 
 run_command=go run main.go server
 
+check-cognitive-complexity:
+	find . -type f -name '*.go' -not -name "*.pb.go" -not -name "mock*.go" -not -name "generated.go" -not -name "federation.go" \
+      -exec gocognit -over 15 {} +
+
 run: check-modd-exists
 	@modd -f ./.modd/server.modd.conf
 
