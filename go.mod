@@ -7,7 +7,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
-	github.com/sweet-go/stdlib v0.0.0-20230416141819-011ddb6c709a
+	github.com/sweet-go/stdlib v1.0.0
 )
 
 require (

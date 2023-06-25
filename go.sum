@@ -226,6 +226,8 @@ github.com/sweet-go/stdlib v0.0.0-20230416133005-bb94ff91d50b h1:+0EgOLW8cvTlFMa
 github.com/sweet-go/stdlib v0.0.0-20230416133005-bb94ff91d50b/go.mod h1:rBVIVYsRyfjCONFiyWYWjbQPt5oBag871RbArM5XywE=
 github.com/sweet-go/stdlib v0.0.0-20230416141819-011ddb6c709a h1:u1Tpfk5ShwwOUi8qPPCsRtyMWQNYDhFpOGF63D0d8pk=
 github.com/sweet-go/stdlib v0.0.0-20230416141819-011ddb6c709a/go.mod h1:rBVIVYsRyfjCONFiyWYWjbQPt5oBag871RbArM5XywE=
+github.com/sweet-go/stdlib v1.0.0 h1:i3bBQSkoAk53hprIcUREXRGVnKaNjshrRcye2CLwpa8=
+github.com/sweet-go/stdlib v1.0.0/go.mod h1:rBVIVYsRyfjCONFiyWYWjbQPt5oBag871RbArM5XywE=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
