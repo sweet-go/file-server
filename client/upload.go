@@ -44,9 +44,18 @@ func (c *impl) Upload(ctx context.Context, input UploadFileInput) (*model.File, 
 		return nil, err
 	}
 
-	helper.WrapCloser(writter.Close)
+	if err := AddDeletableMedia(writter, input); err != nil {
+		logger.WithError(err).Error("failed to add deletable media")
+		return nil, err
+	}
 
-	url := fmt.Sprintf("%s/upload/", c.baseURL)
+	if err := writter.Close(); err != nil {
+		logger.WithError(err).Error("failed to close writter")
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%s/public/upload/", c.baseURL)
+	logger.Info("url", url)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, body)
 	if err != nil {
 		logger.WithError(err).Error("failed to create request")
@@ -60,8 +69,8 @@ func (c *impl) Upload(ctx context.Context, input UploadFileInput) (*model.File, 
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusInternalServerError {
-		logger.WithError(err).Error("failed to upload file because file server return internal server error")
+	if resp.StatusCode != http.StatusOK {
+		logger.WithError(err).Error("failed to upload file because file server return non 200 OK")
 		return nil, err
 	}
 
