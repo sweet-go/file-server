@@ -2,6 +2,7 @@ package helper
 
 import (
 	"encoding/base64"
+	"os"
 	"strings"
 
 	"github.com/sweet-go/stdlib/helper"
@@ -17,4 +18,13 @@ func GenerateEncryptedFilename(name string) string {
 
 func GenerateDecryptedFilename(name string) string {
 	return name + "_dec"
+}
+
+func IsFileExists(filename string) bool {
+	c, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return !c.IsDir()
 }

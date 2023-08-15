@@ -6,7 +6,11 @@ import (
 	"time"
 )
 
-const MultipartFileKey = "file"
+const (
+	MultipartFileKey        = "file"
+	MultipartIsDeletableKey = "is_deletable"
+	MultipartDeleteRuleKey  = "delete_rule"
+)
 
 type File struct {
 	Name        string    `json:"name"`
@@ -14,9 +18,17 @@ type File struct {
 	ContentType string    `json:"content_type"`
 	IsPublic    bool      `json:"is_public"`
 	CreatedAt   time.Time `json:"created_at"`
+
+	DeletableMedia *DeletableMedia `json:"deletable_media,omitempty"`
+}
+
+type PublicUploadInput struct {
+	File           *multipart.FileHeader
+	IsDeletable    bool
+	DeletableMedia *DeletableMedia
 }
 
 type PublicHandler interface {
-	Upload(ctx context.Context, file *multipart.FileHeader) (*File, error)
+	Upload(ctx context.Context, input *PublicUploadInput) (*File, error)
 	Download(ctx context.Context, filename string) (*File, []byte, error)
 }

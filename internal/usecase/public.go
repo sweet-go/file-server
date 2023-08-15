@@ -2,12 +2,13 @@ package usecase
 
 import (
 	"context"
-	"mime/multipart"
+	"errors"
 	"net/http"
 	"os"
 	"path"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	localHelper "github.com/sweet-go/file-server/internal/helper"
 	"github.com/sweet-go/file-server/model"
 	"github.com/sweet-go/stdlib/encryption"
@@ -16,19 +17,26 @@ import (
 )
 
 type publicHandler struct {
-	keyComponent *encryption.KeyComponent
-	storagePath  string
+	keyComponent       *encryption.KeyComponent
+	storagePath        string
+	deletableMediaRepo model.DeletableMediaRepository
 }
 
-func NewPublicHandler(keyComponent *encryption.KeyComponent, storagePath string) model.PublicHandler {
+func NewPublicHandler(keyComponent *encryption.KeyComponent, storagePath string, deletableMediaRepo model.DeletableMediaRepository) model.PublicHandler {
 	return &publicHandler{
 		keyComponent,
 		storagePath,
+		deletableMediaRepo,
 	}
 }
 
-func (h *publicHandler) Upload(ctx context.Context, file *multipart.FileHeader) (*model.File, error) {
-	md, err := helper.ReadFileMetadata(file)
+func (h *publicHandler) Upload(ctx context.Context, input *model.PublicUploadInput) (*model.File, error) {
+	logger := logrus.WithContext(ctx).WithFields(logrus.Fields{
+		"input": helper.Dump(input),
+		"func":  "Upload",
+	})
+
+	md, err := helper.ReadFileMetadata(input.File)
 	if err != nil {
 		return nil, &custerr.ErrChain{
 			Message: "failed to read file metadata",
@@ -40,7 +48,7 @@ func (h *publicHandler) Upload(ctx context.Context, file *multipart.FileHeader) 
 
 	filename := localHelper.GenerateUploadedFilename(md.Name)
 	path := path.Clean(path.Join(h.storagePath, filename))
-	if err := helper.MultipartFileSaver(file, path); err != nil {
+	if err := helper.MultipartFileSaver(input.File, path); err != nil {
 		return nil, &custerr.ErrChain{
 			Message: "failed to save file",
 			Cause:   err,
@@ -69,12 +77,26 @@ func (h *publicHandler) Upload(ctx context.Context, file *multipart.FileHeader) 
 		}
 	}
 
+	var deletableMedia *model.DeletableMedia
+	if input.IsDeletable {
+		deletableMedia = &model.DeletableMedia{
+			ID:         helper.GenerateID(),
+			Name:       filename,
+			DeleteRule: input.DeletableMedia.DeleteRule,
+		}
+		if err := h.deletableMediaRepo.Create(ctx, deletableMedia); err != nil {
+			// if err here, just report
+			logger.WithError(err).Error("failed to write deletable media rules to db")
+		}
+	}
+
 	return &model.File{
-		Name:        filename,
-		Size:        md.Size,
-		ContentType: md.ContentType,
-		IsPublic:    true,
-		CreatedAt:   time.Now(),
+		Name:           filename,
+		Size:           md.Size,
+		ContentType:    md.ContentType,
+		IsPublic:       true,
+		CreatedAt:      time.Now(),
+		DeletableMedia: deletableMedia,
 	}, nil
 }
 
@@ -87,6 +109,15 @@ func (h *publicHandler) Download(ctx context.Context, filename string) (*model.F
 		AESKeyLength: encryption.AES128,
 		Key:          h.keyComponent,
 		BufferSize:   1024,
+	}
+
+	if !localHelper.IsFileExists(filepath) {
+		return nil, nil, &custerr.ErrChain{
+			Message: "file not found",
+			Cause:   errors.New("file not found. maybe already deleted"),
+			Code:    http.StatusNotFound,
+			Type:    ErrNotFound,
+		}
 	}
 
 	err := encryption.DecryptFile(opts)
