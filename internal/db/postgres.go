@@ -1,3 +1,4 @@
+// Package db contains the database connection
 package db
 
 import (
@@ -12,9 +13,11 @@ import (
 )
 
 var (
+	// PostgresDB is the global postgres connection
 	PostgresDB *gorm.DB
 )
 
+// InitializePostgresConn initializes the postgres connection
 func InitializePostgresConn() {
 	conn, err := libdb.NewPostgresDB(config.PostgresDSN())
 	if err != nil {

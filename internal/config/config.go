@@ -1,24 +1,31 @@
+// Package config provides application configuration
 package config
 
 import (
 	"fmt"
 
 	"github.com/spf13/viper"
+
+	// this blank import is used to run the init function of this stdlib/config package
 	_ "github.com/sweet-go/stdlib/config"
 )
 
+// Env returns application environment
 func Env() string {
 	return viper.GetString("env")
 }
 
+// LogLevel returns application log level
 func LogLevel() string {
 	return viper.GetString("log.level")
 }
 
+// ServerPort returns application server port
 func ServerPort() string {
 	return fmt.Sprintf(":%s", viper.GetString("server.port"))
 }
 
+// StoragePath returns application storage path
 func StoragePath() string {
 	return viper.GetString("server.storage_path")
 }

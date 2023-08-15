@@ -6,12 +6,14 @@ import (
 	"time"
 )
 
+// list constant for easier usage between internal func and client package to lookup certain input
 const (
 	MultipartFileKey        = "file"
 	MultipartIsDeletableKey = "is_deletable"
 	MultipartDeleteRuleKey  = "delete_rule"
 )
 
+// File is a model for file
 type File struct {
 	Name        string    `json:"name"`
 	Size        int64     `json:"size"`
@@ -22,12 +24,14 @@ type File struct {
 	DeletableMedia *DeletableMedia `json:"deletable_media,omitempty"`
 }
 
+// PublicUploadInput is input to upload file
 type PublicUploadInput struct {
 	File           *multipart.FileHeader
 	IsDeletable    bool
 	DeletableMedia *DeletableMedia
 }
 
+// PublicHandler is an interface for public handler
 type PublicHandler interface {
 	Upload(ctx context.Context, input *PublicUploadInput) (*File, error)
 	Download(ctx context.Context, filename string) (*File, []byte, error)

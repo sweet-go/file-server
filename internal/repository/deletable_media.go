@@ -1,3 +1,4 @@
+// Package repository provides the repository layer for the file server service
 package repository
 
 import (
@@ -12,6 +13,7 @@ type deletableMediaRepo struct {
 	db *gorm.DB
 }
 
+// NewDeletableMediaRepository creates a new deletable media repository
 func NewDeletableMediaRepository(db *gorm.DB) model.DeletableMediaRepository {
 	return &deletableMediaRepo{
 		db: db,

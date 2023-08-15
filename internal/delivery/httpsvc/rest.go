@@ -8,6 +8,7 @@ import (
 	stdhttp "github.com/sweet-go/stdlib/http"
 )
 
+// Service is the http service
 type Service struct {
 	publicGroup           *echo.Group
 	publicHandler         model.PublicHandler
@@ -15,6 +16,7 @@ type Service struct {
 	deletableMediaUsecase model.DeletableMediaUsecase
 }
 
+// NewService creates a new http service
 func NewService(publicGroup *echo.Group, publicHandler model.PublicHandler, apiRespGenerator stdhttp.APIResponseGenerator, deletableMediaUsecase model.DeletableMediaUsecase) {
 	s := &Service{
 		publicGroup,

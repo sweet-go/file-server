@@ -22,6 +22,7 @@ type publicHandler struct {
 	deletableMediaRepo model.DeletableMediaRepository
 }
 
+// NewPublicHandler creates new public handler
 func NewPublicHandler(keyComponent *encryption.KeyComponent, storagePath string, deletableMediaRepo model.DeletableMediaRepository) model.PublicHandler {
 	return &publicHandler{
 		keyComponent,
@@ -57,6 +58,7 @@ func (h *publicHandler) Upload(ctx context.Context, input *model.PublicUploadInp
 		}
 	}
 
+	// FIXME: use helper.LogIfError from stdlib to avoid linter error
 	defer helper.DeleteFile(path)
 
 	encOpts := &encryption.FileEncryptionOpts{
@@ -100,7 +102,7 @@ func (h *publicHandler) Upload(ctx context.Context, input *model.PublicUploadInp
 	}, nil
 }
 
-func (h *publicHandler) Download(ctx context.Context, filename string) (*model.File, []byte, error) {
+func (h *publicHandler) Download(_ context.Context, filename string) (*model.File, []byte, error) {
 	filepath := path.Clean(path.Join(h.storagePath, localHelper.GenerateEncryptedFilename(filename)))
 	dec := localHelper.GenerateDecryptedFilename(filepath)
 	opts := &encryption.FileEncryptionOpts{
@@ -130,6 +132,7 @@ func (h *publicHandler) Download(ctx context.Context, filename string) (*model.F
 		}
 	}
 
+	// FIXME: use helper.LogIfError from stdlib to avoid linter error
 	defer helper.DeleteFile(dec)
 
 	f, err := os.ReadFile(dec)

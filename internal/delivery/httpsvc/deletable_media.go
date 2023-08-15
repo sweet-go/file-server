@@ -1,3 +1,4 @@
+// Package httpsvc provides http service for file server
 package httpsvc
 
 import (

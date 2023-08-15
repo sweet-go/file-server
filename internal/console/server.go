@@ -31,7 +31,7 @@ func init() {
 	RootCMD.AddCommand(serverCmd)
 }
 
-func server(cmd *cobra.Command, args []string) {
+func server(_ *cobra.Command, _ []string) {
 	key, err := encryption.ReadKeyFromFile("./private.pem")
 	if err != nil {
 		panic(err)

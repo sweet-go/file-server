@@ -41,6 +41,7 @@ func ParseResponseBody(body io.ReadCloser) (*model.File, error) {
 	return file, nil
 }
 
+// AddDeletableMedia adds deletable media to multipart writer.
 func AddDeletableMedia(writter *multipart.Writer, input UploadFileInput) error {
 	if !input.IsDeletable {
 		return nil

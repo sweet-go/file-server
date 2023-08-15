@@ -1,3 +1,4 @@
+// Package usecase provides usecase implementation for deletable media
 package usecase
 
 import (
@@ -19,6 +20,7 @@ type deletableMedia struct {
 	storagePath string
 }
 
+// NewDeletableMediaUsecase creates new deletable media usecase
 func NewDeletableMediaUsecase(repo model.DeletableMediaRepository, storagePath string) model.DeletableMediaUsecase {
 	return &deletableMedia{
 		repo:        repo,

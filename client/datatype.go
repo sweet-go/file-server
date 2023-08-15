@@ -1,3 +1,4 @@
+// Package client is the client functionality to access API's for file server
 package client
 
 import (
@@ -13,6 +14,7 @@ type UploadFileInput struct {
 	DeletableMedia *model.DeletableMedia
 }
 
+// DeleteFileInput is the input for Delete method
 type DeleteFileInput struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
