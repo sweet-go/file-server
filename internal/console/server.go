@@ -13,7 +13,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/cobra"
 	"github.com/sweet-go/file-server/internal/config"
+	"github.com/sweet-go/file-server/internal/db"
 	"github.com/sweet-go/file-server/internal/delivery/httpsvc"
+	"github.com/sweet-go/file-server/internal/repository"
 	"github.com/sweet-go/file-server/internal/usecase"
 	"github.com/sweet-go/stdlib/encryption"
 	stdhttp "github.com/sweet-go/stdlib/http"
@@ -35,7 +37,12 @@ func server(cmd *cobra.Command, args []string) {
 		panic(err)
 	}
 
-	publicHandler := usecase.NewPublicHandler(key, config.StoragePath())
+	db.InitializePostgresConn()
+
+	deletableMediaRepo := repository.NewDeletableMediaRepository(db.PostgresDB)
+	deletableMediaUsecase := usecase.NewDeletableMediaUsecase(deletableMediaRepo, config.StoragePath())
+
+	publicHandler := usecase.NewPublicHandler(key, config.StoragePath(), deletableMediaRepo)
 	apirespGen := stdhttp.NewStandardAPIResponseGenerator(&encryption.SignOpts{
 		Random:  rand.Reader,
 		PrivKey: key.PrivateKey,
@@ -54,7 +61,7 @@ func server(cmd *cobra.Command, args []string) {
 
 	publicGroup := HTTPServer.Group("public")
 
-	httpsvc.NewService(publicGroup, publicHandler, apirespGen)
+	httpsvc.NewService(publicGroup, publicHandler, apirespGen, deletableMediaUsecase)
 
 	// Start server
 	go func() {

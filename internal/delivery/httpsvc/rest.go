@@ -9,16 +9,18 @@ import (
 )
 
 type Service struct {
-	publicGroup      *echo.Group
-	publicHandler    model.PublicHandler
-	apiRespGenerator stdhttp.APIResponseGenerator
+	publicGroup           *echo.Group
+	publicHandler         model.PublicHandler
+	apiRespGenerator      stdhttp.APIResponseGenerator
+	deletableMediaUsecase model.DeletableMediaUsecase
 }
 
-func NewService(publicGroup *echo.Group, publicHandler model.PublicHandler, apiRespGenerator stdhttp.APIResponseGenerator) {
+func NewService(publicGroup *echo.Group, publicHandler model.PublicHandler, apiRespGenerator stdhttp.APIResponseGenerator, deletableMediaUsecase model.DeletableMediaUsecase) {
 	s := &Service{
 		publicGroup,
 		publicHandler,
 		apiRespGenerator,
+		deletableMediaUsecase,
 	}
 
 	s.initPublicRoutes()
@@ -31,4 +33,5 @@ func (s *Service) initPublicRoutes() {
 
 	s.publicGroup.POST("/upload/", s.handlePublicUpload())
 	s.publicGroup.GET("/download/:filename/", s.handlePublicDownload())
+	s.publicGroup.DELETE("/", s.handleDeleteMedia())
 }
