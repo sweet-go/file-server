@@ -12,6 +12,7 @@ func init() {
 	cmd.SetupLogger(config.Env(), config.LogLevel(), "")
 }
 
+// RootCMD root command
 var RootCMD = cmd.CobraInitializer()
 
 // Execute execute command

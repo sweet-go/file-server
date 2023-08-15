@@ -6,6 +6,9 @@ endif
 
 run_command=go run main.go server
 
+migrate_up=go run main.go migrate --direction=up --step=0
+migrate_down=go run main.go migrate --direction=down --step=0
+
 check-cognitive-complexity:
 	find . -type f -name '*.go' -not -name "*.pb.go" -not -name "mock*.go" -not -name "generated.go" -not -name "federation.go" \
       -exec gocognit -over 15 {} +
@@ -36,3 +39,11 @@ test: lint test-only
 
 check-modd-exists:
 	@modd --version > /dev/null	
+
+
+migrate:
+	@if [ "$(DIRECTION)" = "" ] || [ "$(STEP)" = "" ]; then\
+    	$(migrate_up);\
+	else\
+		go run main.go migrate --direction=$(DIRECTION) --step=$(STEP);\
+    fi
