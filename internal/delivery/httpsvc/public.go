@@ -2,6 +2,7 @@ package httpsvc
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sweet-go/file-server/model"
@@ -20,7 +21,34 @@ func (s *Service) handlePublicUpload() echo.HandlerFunc {
 			}, nil)
 		}
 
-		f, err := s.publicHandler.Upload(c.Request().Context(), file)
+		isDeleteable := false
+		var deleteRule model.DeleteRule
+
+		isDeletableInput := c.FormValue(model.MultipartIsDeletableKey)
+		if strings.ToLower(isDeletableInput) == "true" {
+			isDeleteable = true
+
+			deleteRuleInput := c.FormValue(model.MultipartDeleteRuleKey)
+			deleteRule, err = model.ParseStringToDeleteRule(deleteRuleInput)
+			if err != nil {
+				return s.apiRespGenerator.GenerateEchoAPIResponse(c, &stdhttp.StandardResponse{
+					Success: false,
+					Message: "invalid / mising delete rule",
+					Status:  http.StatusBadRequest,
+					Error:   echo.ErrBadRequest.Error(),
+				}, nil)
+			}
+		}
+
+		uploadInput := &model.PublicUploadInput{
+			File:        file,
+			IsDeletable: isDeleteable,
+			DeletableMedia: &model.DeletableMedia{
+				DeleteRule: deleteRule,
+			},
+		}
+
+		f, err := s.publicHandler.Upload(c.Request().Context(), uploadInput)
 		if err != nil {
 			return s.apiRespGenerator.GenerateEchoAPIResponse(c, &stdhttp.StandardResponse{
 				Success: false,
