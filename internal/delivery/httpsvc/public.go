@@ -1,8 +1,10 @@
 package httpsvc
 
 import (
+	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sweet-go/file-server/model"
@@ -22,18 +24,17 @@ func (s *Service) handlePublicUpload() echo.HandlerFunc {
 		}
 
 		isDeleteable := false
-		var deleteRule model.DeleteRule
+		var deletable *model.DeletableMedia
 
 		isDeletableInput := c.FormValue(model.MultipartIsDeletableKey)
 		if strings.ToLower(isDeletableInput) == "true" {
 			isDeleteable = true
 
-			deleteRuleInput := c.FormValue(model.MultipartDeleteRuleKey)
-			deleteRule, err = model.ParseStringToDeleteRule(deleteRuleInput)
+			deletable, err = s.extractDeleteRule(c)
 			if err != nil {
 				return s.apiRespGenerator.GenerateEchoAPIResponse(c, &stdhttp.StandardResponse{
 					Success: false,
-					Message: "invalid / mising delete rule",
+					Message: err.Error(),
 					Status:  http.StatusBadRequest,
 					Error:   echo.ErrBadRequest.Error(),
 				}, nil)
@@ -41,11 +42,9 @@ func (s *Service) handlePublicUpload() echo.HandlerFunc {
 		}
 
 		uploadInput := &model.PublicUploadInput{
-			File:        file,
-			IsDeletable: isDeleteable,
-			DeletableMedia: &model.DeletableMedia{
-				DeleteRule: deleteRule,
-			},
+			File:           file,
+			IsDeletable:    isDeleteable,
+			DeletableMedia: deletable,
 		}
 
 		f, err := s.publicHandler.Upload(c.Request().Context(), uploadInput)
@@ -86,4 +85,43 @@ func (s *Service) handlePublicDownload() echo.HandlerFunc {
 
 		return c.Blob(http.StatusOK, f.ContentType, dec)
 	}
+}
+
+func (s *Service) extractDeleteRule(c echo.Context) (*model.DeletableMedia, error) {
+	deleteRuleInput := c.FormValue(model.MultipartDeleteRuleKey)
+	deleteRule, err := model.ParseStringToDeleteRule(deleteRuleInput)
+	if err != nil {
+		return nil, err
+	}
+
+	switch deleteRule {
+	default:
+		return nil, errors.New("invalid delete rule")
+
+	case model.ManualDelete:
+		return &model.DeletableMedia{
+			DeleteRule: deleteRule,
+		}, nil
+
+	case model.ScheduledDelete:
+		dur := c.FormValue(model.MultipartScheduledDeleteDuration)
+		if dur == "" {
+			return nil, errors.New("missing scheduled delete duration")
+		}
+
+		duration, err := time.ParseDuration(dur)
+		if err != nil {
+			return nil, err
+		}
+
+		deleteAfter := time.Now().Add(duration)
+
+		return &model.DeletableMedia{
+			DeleteRule: deleteRule,
+			Metadata: &model.DeletableRuleMetadata{
+				DeleteAfter: &deleteAfter,
+			},
+		}, nil
+	}
+
 }
