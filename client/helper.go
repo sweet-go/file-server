@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"mime/multipart"
+	"time"
 
 	"github.com/sweet-go/file-server/model"
 	"github.com/sweet-go/stdlib/helper"
@@ -62,9 +63,34 @@ func AddDeletableMedia(writter *multipart.Writer, input UploadFileInput) error {
 		return err
 	}
 
-	_, err = fw.Write([]byte(input.DeletableMedia.DeleteRule))
-	if err != nil {
-		return err
+	switch input.DeleteRule {
+	case model.ManualDelete:
+		_, err = fw.Write([]byte(input.DeleteRule))
+		if err != nil {
+			return err
+		}
+
+	case model.ScheduledDelete:
+		_, err := time.ParseDuration(input.DeleteAfter)
+		if err != nil {
+			// safety check to ensure that input.DeleteAfter is able to be parsed by time.ParseDuration
+			return err
+		}
+
+		_, err = fw.Write([]byte(input.DeleteRule))
+		if err != nil {
+			return err
+		}
+
+		fw, err = writter.CreateFormField(model.MultipartScheduledDeleteDuration)
+		if err != nil {
+			return err
+		}
+
+		_, err = fw.Write([]byte(input.DeleteAfter))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

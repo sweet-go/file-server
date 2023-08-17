@@ -9,9 +9,10 @@ import (
 
 // UploadFileInput is the input for Upload method
 type UploadFileInput struct {
-	FullPath       string
-	IsDeletable    bool
-	DeletableMedia *model.DeletableMedia
+	FullPath    string
+	IsDeletable bool
+	DeleteRule  model.DeleteRule
+	DeleteAfter string
 }
 
 // DeleteFileInput is the input for Delete method
