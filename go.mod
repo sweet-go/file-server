@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
-	github.com/sweet-go/stdlib v1.0.1-0.20230817100845-0bf21fa36aeb
+	github.com/sweet-go/stdlib v1.1.0
 	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
 )
 

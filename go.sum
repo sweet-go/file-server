@@ -207,6 +207,8 @@ github.com/sweet-go/stdlib v1.0.1-0.20230817100039-5f31126090e3 h1:dXuI2lO0u/WpU
 github.com/sweet-go/stdlib v1.0.1-0.20230817100039-5f31126090e3/go.mod h1:tkBompIyfK/lJoQwiM7t1SO0QjuNFhltnJvj6WT9oo8=
 github.com/sweet-go/stdlib v1.0.1-0.20230817100845-0bf21fa36aeb h1:rPvzqMijWCTKHJqBfwhfqzQwLRv59iL8ULi+senr1z0=
 github.com/sweet-go/stdlib v1.0.1-0.20230817100845-0bf21fa36aeb/go.mod h1:tkBompIyfK/lJoQwiM7t1SO0QjuNFhltnJvj6WT9oo8=
+github.com/sweet-go/stdlib v1.1.0 h1:C6k92dA95C3msGb6xXGToTe8btpqcAZ2+Al3E+bg6PM=
+github.com/sweet-go/stdlib v1.1.0/go.mod h1:tkBompIyfK/lJoQwiM7t1SO0QjuNFhltnJvj6WT9oo8=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
 github.com/urfave/negroni v1.0.0/go.mod h1:Meg73S6kFm/4PpbYdq35yYWoCZ9mS/YSx+lKnmiohz4=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
