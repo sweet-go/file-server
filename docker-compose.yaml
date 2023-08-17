@@ -10,3 +10,11 @@ services:
       - "10000:10000"
     volumes:
       - /var/local_storage/file_server/:/var/local_storage/file_server/
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "./main worker"
+    depends_on:
+      - server

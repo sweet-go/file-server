@@ -16,6 +16,9 @@ check-cognitive-complexity:
 run: check-modd-exists
 	@modd -f ./.modd/server.modd.conf
 
+worker: check-modd-exists
+	@modd -f ./.modd/worker.modd.conf
+
 lint: check-cognitive-complexity
 	golangci-lint run --print-issued-lines=false --exclude-use-default=false --enable=revive --enable=goimports  --enable=unconvert --enable=unparam --concurrency=2
 

@@ -8,9 +8,10 @@ import (
 
 // list constant for easier usage between internal func and client package to lookup certain input
 const (
-	MultipartFileKey        = "file"
-	MultipartIsDeletableKey = "is_deletable"
-	MultipartDeleteRuleKey  = "delete_rule"
+	MultipartFileKey                 = "file"
+	MultipartIsDeletableKey          = "is_deletable"
+	MultipartDeleteRuleKey           = "delete_rule"
+	MultipartScheduledDeleteDuration = "delete_duration"
 )
 
 // File is a model for file
