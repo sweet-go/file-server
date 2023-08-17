@@ -85,6 +85,7 @@ func (h *publicHandler) Upload(ctx context.Context, input *model.PublicUploadInp
 			ID:         helper.GenerateID(),
 			Name:       filename,
 			DeleteRule: input.DeletableMedia.DeleteRule,
+			Metadata:   input.DeletableMedia.Metadata,
 		}
 		if err := h.deletableMediaRepo.Create(ctx, deletableMedia); err != nil {
 			// if err here, just report

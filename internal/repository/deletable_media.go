@@ -68,3 +68,28 @@ func (r *deletableMediaRepo) Delete(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (r *deletableMediaRepo) FindForScheduledDelete(ctx context.Context, limit int) ([]model.DeletableMedia, error) {
+	logger := logrus.WithContext(ctx).WithFields(logrus.Fields{
+		"method": "FindByScheduledDelete",
+		"limit":  limit,
+	})
+
+	var deletableMedia []model.DeletableMedia
+	err := r.db.WithContext(ctx).Limit(limit).Order("metadata ->> 'delete_after' asc").Take(&deletableMedia).Error
+	switch err {
+	default:
+		logger.WithError(err).Error("failed to find deletable media")
+		return nil, err
+
+	case gorm.ErrRecordNotFound:
+		return nil, ErrNotFound
+
+	case nil:
+		if len(deletableMedia) == 0 {
+			return nil, ErrNotFound
+		}
+
+		return deletableMedia, nil
+	}
+}
